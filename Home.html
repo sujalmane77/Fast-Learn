@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastLearn</title>
+    <link rel="stylesheet" href="css1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body id="home">
+    <div id="header">
+        <div style="display: flex; gap: 20px;">
+            <p id="pnt">🎯 100 Points</p>
+            <p id="streak">🔥 5 Day Streak</p>
+        </div>
+        <button id="change">🎨 Change Theme</button>
+    </div>
+
+    <div class="home-container">
+        <h1 style="text-align: center; margin-bottom: 30px; font-size: 2.5em;">Welcome to Fast-Learn</h1>
+        <p style="margin-bottom: 25px;">Fast-Learn is a personalized learning platform designed to support neurodivergent 
+            individuals in their educational journey. We understand that every brain learns differently, and our goal is to create 
+            an inclusive, distraction-free, and engaging study environment tailored to your unique needs.
+        </p>
+        
+        <div class="login-prompt">
+            <h2 style="margin-bottom: 15px;">Start Your Learning Journey</h2>
+            <p style="margin-bottom: 20px;">Sign in to unlock a customized study experience designed to fit your unique learning style. 
+                Track your progress, stay motivated with streaks, and access tools that help you focus and retain information 
+                effortlessly.
+                🎯 Earn & Redeem Points! Stay engaged by collecting points as you learn and redeem them for exclusive 
+                gifts and benefits. Your journey to smarter, stress-free learning starts here!  
+            </p>
+            <a href="Login.html" class="login-btn">🚀 Get Started</a>
+            <p style="margin-top: 15px;">New here? <a href="sign.html" style="color: #6200EA; font-weight: 600;">Create an account</a></p>
+        </div>
+    </div>
+    <div id="upload">
+        <h3>🗣️ Text to Speech Converter - Upload Your PPT/PDF/Notes</h3>
+        <button>📂 Upload a File</button>
+        <p>Text to Speech Converter allows you to upload PPTs, PDFs, or notes and instantly convert them into audio format. 
+            This feature helps in better retention, reduced eye strain, and hands-free learning, making studying more accessible and 
+            efficient. </p>
+        <h3>AI Assistance</h3>
+        <button id="Chatbot">💬 Open Chatbot Assistant</button>
+        <div id="chatContainer">
+            <p id="promt"> Hello 👋! I am FL bot How can I assist you today?Please feel free to ask questions</p>
+            <button id="voiceAssist">🎙️ Enable Voice Assistance</button>
+        </div>
+        <div id="quiz">
+            <h3>Feeling read why not take quiz?</h3>
+            <button>Quiz</button>
+        </div>
+    </div>
+    
+    <div id="footer">
+        <p id="reverse">⏱️ Study Timer: <span id="timerDisplay">45:00</span></p>
+        <button id="timer">Start</button>
+    </div>
+    <script>
+        const themes = [
+            { 
+                name: "Lavender Dream",
+                background: "linear-gradient(135deg, #E2C2F0, #D4A5E5)",
+                text: "#1A1A1A"
+            },
+            {
+                name: "Ocean Breeze",
+                background: "linear-gradient(135deg, #AFCBFF, #8E9FFF)",
+                text: "#1A1A1A"
+            },
+            {
+                name: "Mint Fresh",
+                background: "linear-gradient(135deg, #B5EAD7, #95D5B2)",
+                text: "#1A1A1A"
+            },
+            {
+                name: "Soft Charcoal",
+                background: "#4E4E50",
+                text: "#FFFFFF"
+            }
+        ];
+
+        let currentTheme = 0;
+
+        // Save theme to localStorage
+        function saveTheme(themeIndex) {
+            localStorage.setItem('selectedTheme', themeIndex);
+        }
+
+        // Load theme from localStorage
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme !== null) {
+                currentTheme = parseInt(savedTheme);
+                applyTheme(currentTheme);
+            }
+        }
+
+        // Apply theme function
+        function applyTheme(themeIndex) {
+            const body = document.getElementById("home") || document.getElementById("login") || document.getElementById("signin");
+            if (body) {
+                body.style.background = themes[themeIndex].background;
+                body.style.color = themes[themeIndex].text;
+            }
+        }
+
+        // Theme change click handler
+        document.getElementById("change").onclick = function() {
+            currentTheme = (currentTheme + 1) % themes.length;
+            applyTheme(currentTheme);
+            saveTheme(currentTheme);
+            
+            // Show theme notification
+            const notification = document.createElement("div");
+            notification.style.position = "fixed";
+            notification.style.top = "20px";
+            notification.style.left = "50%";
+            notification.style.transform = "translateX(-50%)";
+            notification.style.background = "rgba(78, 78, 80, 0.9)";
+            notification.style.color = "#E0E0E0";
+            notification.style.padding = "10px 20px";
+            notification.style.borderRadius = "20px";
+            notification.style.zIndex = "1000";
+            notification.style.border = "1px solid rgba(255, 255, 255, 0.1)";
+            notification.textContent = `Theme: ${themes[currentTheme].name}`;
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 2000);
+        }
+        // Load theme on page load
+        window.onload = loadTheme;
+        let timer; // Stores interval 
+        let timeLeft = 45 * 60; // 45 minutes in seconds
+        let isRunning = false; // Track if timer is running
+        document.getElementById("timer").addEventListener("click", function() {
+            if (!isRunning) {
+                startTimer();
+            }});
+            function startTimer() {
+                isRunning = true;
+                document.getElementById("timer").textContent = "Running...";
+                timer = setInterval(function() {
+                    if (timeLeft > 0) {
+                        timeLeft--; // Reduce time
+                        updateDisplay();
+                    }
+                    else {
+                        clearInterval(timer);
+                        alert("⏳ Time's up! Take a break. ☕");
+                        resetTimer(); // Restart after break prompt
+                    }
+                }, 1000);
+            }
+            function updateDisplay() {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById("timerDisplay").textContent = 
+                `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+            }
+            function resetTimer() {
+                timeLeft = 45 * 60; // Reset to 45 minutes
+                isRunning = false;
+                document.getElementById("timer").textContent = "Restart";
+            }
+        document.getElementById("Chatbot").onclick = function() {
+            let chatContainer = document.getElementById("chatContainer");
+            chatContainer.style.display = "block"; // Show chatbot when clicked
+            }
+        document.getElementById("voiceAssist").onclick = function() {
+            let promt = document.getElementById("promt");
+            promt.innerHTML = "🎤 Voice Assistance Enabled ";
+        };
+    </script>
+</body>
+</html>
